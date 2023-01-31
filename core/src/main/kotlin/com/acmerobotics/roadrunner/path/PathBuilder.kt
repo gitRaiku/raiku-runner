@@ -33,6 +33,7 @@ class EmptyPathSegmentException : PathBuilderException()
  * @param path previous path
  * @param s displacement in previous path
  */
+@Suppress("unused")
 class PathBuilder private constructor(
     startPose: Pose2d?,
     startTangent: Double?,
@@ -41,10 +42,10 @@ class PathBuilder private constructor(
 ) {
     @JvmOverloads
     constructor(startPose: Pose2d, startTangent: Double = startPose.heading) :
-        this(startPose, startTangent, null, null)
+            this(startPose, startTangent, null, null)
 
     constructor(startPose: Pose2d, reversed: Boolean) :
-        this(startPose, Angle.norm(startPose.heading + if (reversed) PI else 0.0))
+            this(startPose, Angle.norm(startPose.heading + if (reversed) PI else 0.0))
 
     constructor(path: Path, s: Double) : this(null, null, path, s)
 
@@ -67,6 +68,25 @@ class PathBuilder private constructor(
         return LineSegment(start.vec(), end)
     }
 
+    private fun makeFunnyRaikuCurve(endPose: Pose2d, p1: Vector2d, p2: Vector2d): RaikuCurve {
+        val startPose = if (currentPose == null) {
+            path!![s!!]
+        } else {
+            currentPose!!
+        }
+
+        if (startPose epsilonEquals endPose) {
+            throw EmptyPathSegmentException()
+        }
+
+        return RaikuCurve(
+            startPose.vec(),
+            endPose.vec(),
+            startPose.vec() + Vector2d.polar(p1.x, p1.y),
+            endPose.vec() + Vector2d.polar(p2.x, p2.y)
+        )
+    }
+
     private fun makeSpline(endPosition: Vector2d, endTangent: Double): QuinticSpline {
         val startPose = if (currentPose == null) {
             path!![s!!]
@@ -83,10 +103,10 @@ class PathBuilder private constructor(
             val startDeriv = path!!.internalDeriv(s!!).vec()
             val startSecondDeriv = path.internalSecondDeriv(s).vec()
             QuinticSpline.Knot(startPose.vec(), startDeriv, startSecondDeriv) to
-                QuinticSpline.Knot(endPosition, Vector2d.polar(derivMag, endTangent))
+                    QuinticSpline.Knot(endPosition, Vector2d.polar(derivMag, endTangent))
         } else {
             QuinticSpline.Knot(startPose.vec(), Vector2d.polar(derivMag, currentTangent!!)) to
-                QuinticSpline.Knot(endPosition, Vector2d.polar(derivMag, endTangent))
+                    QuinticSpline.Knot(endPosition, Vector2d.polar(derivMag, endTangent))
         }
 
         return QuinticSpline(startWaypoint, endWaypoint)
@@ -139,14 +159,16 @@ class PathBuilder private constructor(
         if (segments.isNotEmpty()) {
             val lastSegment = segments.last()
             if (!(lastSegment.end() epsilonEqualsHeading segment.start() &&
-                lastSegment.endDeriv() epsilonEquals segment.startDeriv() &&
-                lastSegment.endSecondDeriv().vec() epsilonEquals segment.startSecondDeriv().vec())) {
+                        lastSegment.endDeriv() epsilonEquals segment.startDeriv() &&
+                        lastSegment.endSecondDeriv().vec() epsilonEquals segment.startSecondDeriv().vec())
+            ) {
                 throw PathContinuityViolationException()
             }
         } else if (currentPose == null) {
             if (!(path!![s!!] epsilonEqualsHeading segment.start() &&
-                path.deriv(s) epsilonEquals segment.startDeriv() &&
-                path.secondDeriv(s).vec() epsilonEquals segment.startSecondDeriv().vec())) {
+                        path.deriv(s) epsilonEquals segment.startDeriv() &&
+                        path.secondDeriv(s).vec() epsilonEquals segment.startSecondDeriv().vec())
+            ) {
                 throw PathContinuityViolationException()
             }
         }
@@ -265,6 +287,13 @@ class PathBuilder private constructor(
 
         return addSegment(PathSegment(spline, interpolator))
     }
+
+    /**
+     * TODO: Get old comments
+     *
+     */
+    fun funnyRaikuCurve(endPose: Pose2d, p1: Vector2d, p2: Vector2d): PathBuilder =
+        addSegment(PathSegment(makeFunnyRaikuCurve(endPose, p1, p2), makeLinearInterpolator(endPose.heading)))
 
     /**
      * Adds a spline segment with constant heading interpolation.

@@ -12,7 +12,7 @@ import com.acmerobotics.roadrunner.path.PathBuilder
  * @param trajectory initial trajectory (for splicing)
  * @param t time index in previous trajectory to begin new trajectory
  */
-@Suppress("UNCHECKED_CAST")
+@Suppress("UNCHECKED_CAST", "MemberVisibilityCanBePrivate")
 abstract class BaseTrajectoryBuilder<T : BaseTrajectoryBuilder<T>> protected constructor(
     startPose: Pose2d?,
     startTangent: Double?,
@@ -136,6 +136,16 @@ abstract class BaseTrajectoryBuilder<T : BaseTrajectoryBuilder<T>> protected con
      */
     fun splineTo(endPosition: Vector2d, endTangent: Double): T {
         pathBuilder.splineTo(endPosition, endTangent)
+
+        return this as T
+    }
+
+    /**
+     * TODO: Recover old comments
+     *
+     */
+    fun funnyRaikuCurve(endPose: Pose2d, p1: Vector2d, p2: Vector2d): T {
+        pathBuilder.funnyRaikuCurve(endPose, p1, p2)
 
         return this as T
     }

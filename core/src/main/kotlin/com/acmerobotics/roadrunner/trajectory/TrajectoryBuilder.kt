@@ -56,6 +56,7 @@ private class PiecewiseAccelerationConstraint(
 /**
  * Builder for trajectories with *dynamic* constraints.
  */
+@Suppress("unused")
 class TrajectoryBuilder private constructor(
     startPose: Pose2d?,
     startTangent: Double?,
@@ -70,7 +71,8 @@ class TrajectoryBuilder private constructor(
      * Create a builder from a start pose and motion state. This is the recommended constructor for creating
      * trajectories from rest.
      */
-    @JvmOverloads constructor(
+    @JvmOverloads
+    constructor(
         startPose: Pose2d,
         startTangent: Double = startPose.heading,
         baseVelConstraint: TrajectoryVelocityConstraint,
@@ -87,7 +89,8 @@ class TrajectoryBuilder private constructor(
         resolution
     )
 
-    @JvmOverloads constructor(
+    @JvmOverloads
+    constructor(
         startPose: Pose2d,
         reversed: Boolean,
         baseVelConstraint: TrajectoryVelocityConstraint,
@@ -105,7 +108,8 @@ class TrajectoryBuilder private constructor(
      * Create a builder from an active trajectory. This is useful for interrupting a live trajectory and smoothly
      * transitioning to a new one.
      */
-    @JvmOverloads constructor(
+    @JvmOverloads
+    constructor(
         trajectory: Trajectory,
         t: Double,
         baseVelConstraint: TrajectoryVelocityConstraint,
@@ -278,6 +282,20 @@ class TrajectoryBuilder private constructor(
         accelConstraintOverride: TrajectoryAccelerationConstraint?
     ) =
         addSegment({ splineTo(endPosition, endTangent) }, velConstraintOverride, accelConstraintOverride)
+
+    /**
+     * TODO: Get old comments
+     *
+     */
+    fun funnyRaikuCurve(
+        endPose: Pose2d,
+        p1: Vector2d,
+        p2: Vector2d,
+        velConstraintOverride: TrajectoryVelocityConstraint?,
+        accelConstraintOverride: TrajectoryAccelerationConstraint?
+    ) =
+        addSegment({ funnyRaikuCurve(endPose, p1, p2) }, velConstraintOverride, accelConstraintOverride)
+
 
     /**
      * Adds a spline segment with constant heading interpolation.
