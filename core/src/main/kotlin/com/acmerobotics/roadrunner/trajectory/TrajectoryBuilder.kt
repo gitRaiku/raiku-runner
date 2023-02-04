@@ -56,7 +56,7 @@ private class PiecewiseAccelerationConstraint(
 /**
  * Builder for trajectories with *dynamic* constraints.
  */
-@Suppress("unused")
+@Suppress("unused", "KDocUnresolvedReference")
 class TrajectoryBuilder private constructor(
     startPose: Pose2d?,
     startTangent: Double?,
@@ -64,6 +64,7 @@ class TrajectoryBuilder private constructor(
     t: Double?,
     private val baseVelConstraint: TrajectoryVelocityConstraint,
     private val baseAccelConstraint: TrajectoryAccelerationConstraint,
+    private val baseDecelConstraint: TrajectoryAccelerationConstraint,
     private val start: MotionState,
     private val resolution: Double
 ) : BaseTrajectoryBuilder<TrajectoryBuilder>(startPose, startTangent, trajectory, t) {
@@ -77,6 +78,7 @@ class TrajectoryBuilder private constructor(
         startTangent: Double = startPose.heading,
         baseVelConstraint: TrajectoryVelocityConstraint,
         baseAccelConstraint: TrajectoryAccelerationConstraint,
+        baseDecelConstraint: TrajectoryAccelerationConstraint,
         resolution: Double = 0.25
     ) : this(
         startPose,
@@ -85,6 +87,7 @@ class TrajectoryBuilder private constructor(
         null,
         baseVelConstraint,
         baseAccelConstraint,
+        baseDecelConstraint,
         MotionState(0.0, 0.0, 0.0),
         resolution
     )
@@ -95,12 +98,14 @@ class TrajectoryBuilder private constructor(
         reversed: Boolean,
         baseVelConstraint: TrajectoryVelocityConstraint,
         baseAccelConstraint: TrajectoryAccelerationConstraint,
+        baseDecelConstraint: TrajectoryAccelerationConstraint,
         resolution: Double = 0.25
     ) : this(
         startPose,
         Angle.norm(startPose.heading + if (reversed) PI else 0.0),
         baseVelConstraint,
         baseAccelConstraint,
+        baseDecelConstraint,
         resolution
     )
 
@@ -114,6 +119,7 @@ class TrajectoryBuilder private constructor(
         t: Double,
         baseVelConstraint: TrajectoryVelocityConstraint,
         baseAccelConstraint: TrajectoryAccelerationConstraint,
+        baseDecelConstraint: TrajectoryAccelerationConstraint,
         resolution: Double = 0.25
     ) : this(
         null,
@@ -122,17 +128,20 @@ class TrajectoryBuilder private constructor(
         t,
         baseVelConstraint,
         baseAccelConstraint,
+        baseDecelConstraint,
         trajectory.profile[t].zeroPosition(),
         resolution
     )
 
     private val velConstraintOverrides = mutableListOf<IntervalVelocityConstraint>()
     private val accelConstraintOverrides = mutableListOf<IntervalAccelerationConstraint>()
+    private val decelConstraintOverrides = mutableListOf<IntervalAccelerationConstraint>()
 
     private fun addSegment(
         add: () -> Unit,
-        velConstraintOverride: TrajectoryVelocityConstraint?,
-        accelConstraintOverride: TrajectoryAccelerationConstraint?
+        velConstraintOverride: TrajectoryVelocityConstraint?=null,
+        accelConstraintOverride: TrajectoryAccelerationConstraint?=null,
+        decelConstraintOverride: TrajectoryAccelerationConstraint?=null
     ): TrajectoryBuilder {
         val start = pathBuilder.build().length()
 
@@ -146,6 +155,10 @@ class TrajectoryBuilder private constructor(
 
         if (accelConstraintOverride != null) {
             accelConstraintOverrides.add(IntervalAccelerationConstraint(start, end, accelConstraintOverride))
+        }
+
+        if (decelConstraintOverride != null) {
+            decelConstraintOverrides.add(IntervalAccelerationConstraint(start, end, decelConstraintOverride))
         }
 
         return this
@@ -292,9 +305,10 @@ class TrajectoryBuilder private constructor(
         p1: Vector2d,
         p2: Vector2d,
         velConstraintOverride: TrajectoryVelocityConstraint?,
-        accelConstraintOverride: TrajectoryAccelerationConstraint?
+        accelConstraintOverride: TrajectoryAccelerationConstraint?,
+        decelConstraintOverride: TrajectoryAccelerationConstraint?
     ) =
-        addSegment({ funnyRaikuCurve(endPose, p1, p2) }, velConstraintOverride, accelConstraintOverride)
+        addSegment({ funnyRaikuCurve(endPose, p1, p2) }, velConstraintOverride, accelConstraintOverride, decelConstraintOverride)
 
 
     /**
@@ -352,6 +366,7 @@ class TrajectoryBuilder private constructor(
             path,
             PiecewiseVelocityConstraint(baseVelConstraint, velConstraintOverrides),
             PiecewiseAccelerationConstraint(baseAccelConstraint, accelConstraintOverrides),
+            PiecewiseAccelerationConstraint(baseDecelConstraint, decelConstraintOverrides),
             start,
             goal,
             temporalMarkers,

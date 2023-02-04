@@ -10,6 +10,7 @@ import com.acmerobotics.roadrunner.util.epsilonEquals
 /**
  * Configuration describing a basic trajectory (a simpler frontend alternative to [BaseTrajectoryBuilder]).
  */
+@Suppress("unused")
 data class TrajectoryConfig(
     val startPose: Pose2d,
     val startTangent: Double,
@@ -41,13 +42,14 @@ data class TrajectoryConfig(
         val interpolationType: HeadingInterpolationType
     )
 
-    @Suppress("ComplexMethod")
+    @Suppress("ComplexMethod", "RedundantNullableReturnType")
     fun toTrajectoryBuilder(groupConfig: TrajectoryGroupConfig): TrajectoryBuilder? {
         val builder = TrajectoryBuilder(
             startPose,
             startTangent,
             groupConfig.velConstraint,
             groupConfig.accelConstraint,
+            groupConfig.decelConstraint,
             resolution = resolution
         )
 

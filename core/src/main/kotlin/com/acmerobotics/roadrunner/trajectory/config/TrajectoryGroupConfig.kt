@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 data class TrajectoryGroupConfig(
     val maxVel: Double,
     val maxAccel: Double,
+    val maxDecel: Double,
     val maxAngVel: Double,
     val maxAngAccel: Double,
     val robotLength: Double,
@@ -46,4 +47,7 @@ DriveType.TANK -> TankVelocityConstraint(maxVel, trackWidth!!)
 
     @JsonIgnore val accelConstraint: TrajectoryAccelerationConstraint =
         ProfileAccelerationConstraint(maxAccel)
+
+    @JsonIgnore val decelConstraint: TrajectoryAccelerationConstraint =
+        ProfileAccelerationConstraint(maxDecel)
 }

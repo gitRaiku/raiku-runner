@@ -10,7 +10,8 @@ import kotlin.math.sqrt
 
 private data class EvaluatedConstraint(
     val maxVel: Double,
-    val maxAccel: Double
+    val maxAccel: Double,
+    val maxDecel: Double
 )
 
 /**
@@ -339,6 +340,7 @@ object MotionProfileGenerator {
      * @param goal goal motion state
      * @param velocityConstraint velocity constraint
      * @param accelerationConstraint acceleration constraint
+     * @param decelerationConstraint figure it out
      * @param resolution separation between constraint samples
      */
     @JvmStatic
@@ -348,6 +350,7 @@ object MotionProfileGenerator {
         goal: MotionState,
         velocityConstraint: VelocityConstraint,
         accelerationConstraint: AccelerationConstraint,
+        decelerationConstraint: AccelerationConstraint,
         resolution: Double = 0.25
     ): MotionProfile {
         if (goal.x < start.x) {
@@ -356,6 +359,7 @@ object MotionProfileGenerator {
                 goal.flipped(),
                 { velocityConstraint[-it] },
                 { accelerationConstraint[-it] },
+                { decelerationConstraint[-it] },
                 resolution
             ).flipped()
         }
@@ -370,7 +374,8 @@ object MotionProfileGenerator {
             (s + start.x).map {
                 EvaluatedConstraint(
                     velocityConstraint[it],
-                    accelerationConstraint[it]
+                    accelerationConstraint[it],
+                    decelerationConstraint[it]
                 )
             }
 
@@ -378,7 +383,8 @@ object MotionProfileGenerator {
         val forwardStates = forwardPass(
             MotionState(0.0, start.v, start.a),
             s,
-            constraintsList
+            constraintsList,
+            false
         ).map { (motionState, dx) -> Pair(
             MotionState(
                 motionState.x + start.x,
@@ -393,7 +399,8 @@ object MotionProfileGenerator {
         val backwardStates = forwardPass(
             MotionState(0.0, goal.v, goal.a),
             s,
-            constraintsList.reversed()
+            constraintsList.reversed(),
+            true
         ).map { (motionState, dx) ->
             Pair(afterDisplacement(motionState, dx), dx)
         }.map { (motionState, dx) ->
@@ -506,7 +513,8 @@ object MotionProfileGenerator {
     private fun forwardPass(
         start: MotionState,
         displacements: DoubleProgression,
-        constraints: List<EvaluatedConstraint>
+        constraints: List<EvaluatedConstraint>,
+        fwb: Boolean
     ): List<Pair<MotionState, Double>> {
         val forwardStates = mutableListOf<Pair<MotionState, Double>>()
 
@@ -519,7 +527,7 @@ object MotionProfileGenerator {
             .forEach { (displacement, constraint) ->
                 // compute the segment constraints
                 val maxVel = constraint.maxVel
-                val maxAccel = constraint.maxAccel
+                val maxAccel = if (fwb) { constraint.maxDecel } else { constraint.maxAccel }
 
                 lastState = if (lastState.v >= maxVel) {
                     // the last velocity exceeds max vel so we just coast

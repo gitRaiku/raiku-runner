@@ -17,6 +17,7 @@ object TrajectoryGenerator {
         path: Path,
         velocityConstraint: TrajectoryVelocityConstraint,
         accelerationConstraint: TrajectoryAccelerationConstraint,
+        decelerationConstraint: TrajectoryAccelerationConstraint,
         start: MotionState,
         goal: MotionState,
         resolution: Double
@@ -36,6 +37,15 @@ object TrajectoryGenerator {
             { s ->
                 val t = path.reparam(s)
                 accelerationConstraint[
+                    s,
+                    path[s, t],
+                    path.deriv(s, t),
+                    Pose2d()
+                ]
+            },
+            { s ->
+                val t = path.reparam(s)
+                decelerationConstraint[
                     s,
                     path[s, t],
                     path.deriv(s, t),
@@ -100,6 +110,7 @@ object TrajectoryGenerator {
      * @param path path
      * @param velocityConstraints trajectory velocity constraints
      * @param accelerationConstraints trajectory acceleration constraints
+     * @param decelerationConstraints mensa
      * @param start start motion state
      * @param goal goal motion state
      * @param temporalMarkers temporal markers
@@ -112,6 +123,7 @@ object TrajectoryGenerator {
         path: Path,
         velocityConstraint: TrajectoryVelocityConstraint,
         accelerationConstraint: TrajectoryAccelerationConstraint,
+        decelerationConstraint: TrajectoryAccelerationConstraint,
         start: MotionState = MotionState(0.0, 0.0, 0.0),
         goal: MotionState = MotionState(path.length(), 0.0, 0.0),
         temporalMarkers: List<TemporalMarker> = emptyList(),
@@ -119,7 +131,7 @@ object TrajectoryGenerator {
         spatialMarkers: List<SpatialMarker> = emptyList(),
         resolution: Double = 0.25
     ): Trajectory {
-        val profile = generateProfile(path, velocityConstraint, accelerationConstraint, start, goal, resolution)
+        val profile = generateProfile(path, velocityConstraint, accelerationConstraint, decelerationConstraint, start, goal, resolution)
         val markers = convertMarkers(path, profile, temporalMarkers, displacementMarkers, spatialMarkers)
         return Trajectory(path, profile, markers)
     }
