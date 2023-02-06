@@ -304,11 +304,13 @@ class TrajectoryBuilder private constructor(
         endPose: Pose2d,
         p1: Vector2d,
         p2: Vector2d,
+        h1: Double,
+        h2: Double,
         velConstraintOverride: TrajectoryVelocityConstraint?,
         accelConstraintOverride: TrajectoryAccelerationConstraint?,
         decelConstraintOverride: TrajectoryAccelerationConstraint?
     ) =
-        addSegment({ funnyRaikuCurve(endPose, p1, p2) }, velConstraintOverride, accelConstraintOverride, decelConstraintOverride)
+        addSegment({ funnyRaikuCurve(endPose, p1, p2, h1, h2) }, velConstraintOverride, accelConstraintOverride, decelConstraintOverride)
 
 
     /**

@@ -144,8 +144,8 @@ abstract class BaseTrajectoryBuilder<T : BaseTrajectoryBuilder<T>> protected con
      * TODO: Recover old comments
      *
      */
-    fun funnyRaikuCurve(endPose: Pose2d, p1: Vector2d, p2: Vector2d): T {
-        pathBuilder.funnyRaikuCurve(endPose, p1, p2)
+    fun funnyRaikuCurve(endPose: Pose2d, p1: Vector2d, p2: Vector2d, h1: Double, h2: Double): T {
+        pathBuilder.funnyRaikuCurve(endPose, p1, p2, h1, h2)
 
         return this as T
     }

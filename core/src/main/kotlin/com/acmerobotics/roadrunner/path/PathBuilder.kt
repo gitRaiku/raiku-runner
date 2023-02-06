@@ -2,10 +2,7 @@ package com.acmerobotics.roadrunner.path
 
 import com.acmerobotics.roadrunner.geometry.Pose2d
 import com.acmerobotics.roadrunner.geometry.Vector2d
-import com.acmerobotics.roadrunner.path.heading.ConstantInterpolator
-import com.acmerobotics.roadrunner.path.heading.LinearInterpolator
-import com.acmerobotics.roadrunner.path.heading.SplineInterpolator
-import com.acmerobotics.roadrunner.path.heading.TangentInterpolator
+import com.acmerobotics.roadrunner.path.heading.*
 import com.acmerobotics.roadrunner.util.Angle
 import kotlin.math.PI
 
@@ -138,6 +135,11 @@ class PathBuilder private constructor(
         val startHeading = currentPose?.heading ?: throw PathContinuityViolationException()
 
         return LinearInterpolator(startHeading, Angle.normDelta(endHeading - startHeading))
+    }
+
+    private fun makeFunnyRaikuInterpolator(endHeading: Double, h1: Double, h2: Double): FunnyRaikuInterpolator {
+        val startHeading = if (currentPose == null) { path!![s!!].heading } else { currentPose?.heading!! }
+        return FunnyRaikuInterpolator(startHeading, Angle.normDelta(endHeading - startHeading), h1, h2)
     }
 
     private fun makeSplineInterpolator(endHeading: Double): SplineInterpolator {
@@ -292,8 +294,8 @@ class PathBuilder private constructor(
      * TODO: Get old comments
      *
      */
-    fun funnyRaikuCurve(endPose: Pose2d, p1: Vector2d, p2: Vector2d): PathBuilder =
-        addSegment(PathSegment(makeFunnyRaikuCurve(endPose, p1, p2), makeLinearInterpolator(endPose.heading)))
+    fun funnyRaikuCurve(endPose: Pose2d, p1: Vector2d, p2: Vector2d, h1: Double, h2: Double): PathBuilder =
+        addSegment(PathSegment(makeFunnyRaikuCurve(endPose, p1, p2), makeFunnyRaikuInterpolator(endPose.heading, h1, h2)))
 
     /**
      * Adds a spline segment with constant heading interpolation.
