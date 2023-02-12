@@ -25,9 +25,9 @@ class RaikuCurve(
     private val ts = mutableListOf(0.0)
 
     companion object {
-        const val MAXD = 8
-        const val MIND = 5
-        const val MACC = 0.9
+        const val MAXD = 10
+        const val MIND = 8
+        const val MACC = 0.95
     }
 
     private fun parameterize(p1: Double, p3: Double, depth: Int = 0) {
