@@ -65,7 +65,34 @@ draw(packet.fieldOverlay(), traj);
 dashboard.sendTelemetryPacket(packet);
 ```
 
-## Instalation
+## Installation
 
 The compiled jar file can be found at ``core/build/libs/core.jar`` which can then be copied into the quickstart in the directory ``TeamCode/lib``. After this you can comment out the line that told the project to use the stock road runner, which probably looked like this ``implementation 'com.acmerobotics.roadrunner:core:0.5.6'``, and add the line ``implementation files('lib/core.jar')`` to tell it to use the custom road-runner jar.
 
+Those using ``TrajectorySequence``s inside the quickstart will also need to add the following functions to the ``trajectorysequence/TrajectorySequenceBuilder.java`` file relative to where the code for the robot usually goes.
+
+```
+public TrajectorySequenceBuilder funnyRaikuCurve(Pose2d endPosition, Vector2d p1, Vector2d p2, double h1, double h2) {
+    return addPath(() -> currentTrajectoryBuilder.funnyRaikuCurve(endPosition, p1, p2, h1, h2, currentVelConstraint, currentAccelConstraint, currentAccelConstraint));
+}
+
+public TrajectorySequenceBuilder funnyRaikuCurve(Pose2d endPosition,
+                                                 Vector2d p1,
+                                                 Vector2d p2,
+                                                 double h1,
+                                                 double h2,
+                                                 TrajectoryVelocityConstraint velConstraint,
+                                                 TrajectoryAccelerationConstraint accelConstraint,
+                                                 TrajectoryAccelerationConstraint decelConstraint
+) {
+    return addPath(() -> currentTrajectoryBuilder.funnyRaikuCurve(endPosition, p1, p2, h1, h2, velConstraint, accelConstraint, decelConstraint));
+}
+```
+
+## Notes
+
+I will probably add asymetric acceleration and deceleration to all of the available trajectories once i get the time to. 
+
+For those using OnBotJava, i'm sorry. I've no idea how to get it to work there...
+
+Happy coding!
