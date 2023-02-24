@@ -1,6 +1,6 @@
 ## Road Runner
 
-A simple Kotlin library for planning 2D mobile robot paths and trajectories designed for FTC. **Note:** this project is in alpha and many of the APIs are incubating.
+A simple Kotlin library for planning 2D mobile robot paths and trajectories designed for FTC. The original Road-Runner repository can be found at [this link](https://github.com/acmerobotics/road-runner)
 
 ## Raiku Runner
 
@@ -89,6 +89,10 @@ public TrajectorySequenceBuilder funnyRaikuCurve(Pose2d endPosition,
 }
 ```
 
+The resulting visualisation should look like something along the lines of
+<p align="center">
+    <img src="https://media.discordapp.net/attachments/944145687896002640/1073313202311544913/Teren.png"/>
+</p>
 ## Notes
 
 I will probably add asymetric acceleration and deceleration to all of the available trajectories once i get the time to. 
