@@ -91,7 +91,7 @@ public TrajectorySequenceBuilder funnyRaikuCurve(Pose2d endPosition,
 
 The resulting visualisation should look like something along the lines of
 <p align="center">
-    <img src="https://media.discordapp.net/attachments/944145687896002640/1073313202311544913/Teren.png"/>
+    <img src="https://media.discordapp.net/attachments/944145687896002640/1073313202311544913/Teren.png?width=512&height=512"/>
 </p>
 ## Notes
 
