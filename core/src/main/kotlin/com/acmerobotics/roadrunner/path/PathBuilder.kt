@@ -297,6 +297,9 @@ class PathBuilder private constructor(
     fun funnyRaikuCurve(endPose: Pose2d, p1: Vector2d, p2: Vector2d, h1: Double, h2: Double): PathBuilder =
         addSegment(PathSegment(makeFunnyRaikuCurve(endPose, p1, p2), makeFunnyRaikuInterpolator(endPose.heading, h1, h2)))
 
+    fun funnyRaikuCurveLinear(endPose: Pose2d, p1: Vector2d, p2: Vector2d): PathBuilder =
+        addSegment(PathSegment(makeFunnyRaikuCurve(endPose, p1, p2), makeLinearInterpolator(endPose.heading)))
+
     /**
      * Adds a spline segment with constant heading interpolation.
      *

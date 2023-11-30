@@ -150,6 +150,12 @@ abstract class BaseTrajectoryBuilder<T : BaseTrajectoryBuilder<T>> protected con
         return this as T
     }
 
+    fun funnyRaikuCurveLinear(endPose: Pose2d, p1: Vector2d, p2: Vector2d): T {
+        pathBuilder.funnyRaikuCurveLinear(endPose, p1, p2)
+
+        return this as T
+    }
+
     /**
      * Adds a spline segment with constant heading interpolation.
      *

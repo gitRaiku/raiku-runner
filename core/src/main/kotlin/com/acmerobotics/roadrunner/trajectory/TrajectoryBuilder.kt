@@ -173,9 +173,10 @@ class TrajectoryBuilder private constructor(
     fun lineTo(
         endPosition: Vector2d,
         velConstraintOverride: TrajectoryVelocityConstraint?,
-        accelConstraintOverride: TrajectoryAccelerationConstraint?
+        accelConstraintOverride: TrajectoryAccelerationConstraint?,
+        decelConstraintOverride: TrajectoryAccelerationConstraint?
     ) =
-        addSegment({ lineTo(endPosition) }, velConstraintOverride, accelConstraintOverride)
+        addSegment({ lineTo(endPosition) }, velConstraintOverride, accelConstraintOverride, decelConstraintOverride)
 
     /**
      * Adds a line segment with constant heading interpolation.
@@ -186,9 +187,10 @@ class TrajectoryBuilder private constructor(
     fun lineToConstantHeading(
         endPosition: Vector2d,
         velConstraintOverride: TrajectoryVelocityConstraint?,
-        accelConstraintOverride: TrajectoryAccelerationConstraint?
+        accelConstraintOverride: TrajectoryAccelerationConstraint?,
+        decelConstraintOverride: TrajectoryAccelerationConstraint?
     ) =
-        addSegment({ lineToConstantHeading(endPosition) }, velConstraintOverride, accelConstraintOverride)
+        addSegment({ lineToConstantHeading(endPosition) }, velConstraintOverride, accelConstraintOverride, decelConstraintOverride)
 
     /**
      * Adds a line segment with linear heading interpolation.
@@ -199,9 +201,10 @@ class TrajectoryBuilder private constructor(
     fun lineToLinearHeading(
         endPose: Pose2d,
         velConstraintOverride: TrajectoryVelocityConstraint?,
-        accelConstraintOverride: TrajectoryAccelerationConstraint?
+        accelConstraintOverride: TrajectoryAccelerationConstraint?,
+        decelConstraintOverride: TrajectoryAccelerationConstraint?
     ) =
-        addSegment({ lineToLinearHeading(endPose) }, velConstraintOverride, accelConstraintOverride)
+        addSegment({ lineToLinearHeading(endPose) }, velConstraintOverride, accelConstraintOverride, decelConstraintOverride)
 
     /**
      * Adds a line segment with spline heading interpolation.
@@ -212,9 +215,10 @@ class TrajectoryBuilder private constructor(
     fun lineToSplineHeading(
         endPose: Pose2d,
         velConstraintOverride: TrajectoryVelocityConstraint?,
-        accelConstraintOverride: TrajectoryAccelerationConstraint?
+        accelConstraintOverride: TrajectoryAccelerationConstraint?,
+        decelConstraintOverride: TrajectoryAccelerationConstraint?
     ) =
-        addSegment({ lineToSplineHeading(endPose) }, velConstraintOverride, accelConstraintOverride)
+        addSegment({ lineToSplineHeading(endPose) }, velConstraintOverride, accelConstraintOverride, decelConstraintOverride)
 
     /**
      * Adds a strafe path segment.
@@ -225,9 +229,10 @@ class TrajectoryBuilder private constructor(
     fun strafeTo(
         endPosition: Vector2d,
         velConstraintOverride: TrajectoryVelocityConstraint?,
-        accelConstraintOverride: TrajectoryAccelerationConstraint?
+        accelConstraintOverride: TrajectoryAccelerationConstraint?,
+        decelConstraintOverride: TrajectoryAccelerationConstraint?
     ) =
-        addSegment({ strafeTo(endPosition) }, velConstraintOverride, accelConstraintOverride)
+        addSegment({ strafeTo(endPosition) }, velConstraintOverride, accelConstraintOverride, decelConstraintOverride)
 
     /**
      * Adds a line straight forward.
@@ -238,9 +243,10 @@ class TrajectoryBuilder private constructor(
     fun forward(
         distance: Double,
         velConstraintOverride: TrajectoryVelocityConstraint?,
-        accelConstraintOverride: TrajectoryAccelerationConstraint?
+        accelConstraintOverride: TrajectoryAccelerationConstraint?,
+        decelConstraintOverride: TrajectoryAccelerationConstraint?
     ) =
-        addSegment({ forward(distance) }, velConstraintOverride, accelConstraintOverride)
+        addSegment({ forward(distance) }, velConstraintOverride, accelConstraintOverride, decelConstraintOverride)
 
     /**
      * Adds a line straight backward.
@@ -251,9 +257,10 @@ class TrajectoryBuilder private constructor(
     fun back(
         distance: Double,
         velConstraintOverride: TrajectoryVelocityConstraint?,
-        accelConstraintOverride: TrajectoryAccelerationConstraint?
+        accelConstraintOverride: TrajectoryAccelerationConstraint?,
+        decelConstraintOverride: TrajectoryAccelerationConstraint?
     ) =
-        addSegment({ back(distance) }, velConstraintOverride, accelConstraintOverride)
+        addSegment({ back(distance) }, velConstraintOverride, accelConstraintOverride, decelConstraintOverride)
 
     /**
      * Adds a segment that strafes left in the robot reference frame.
@@ -264,9 +271,10 @@ class TrajectoryBuilder private constructor(
     fun strafeLeft(
         distance: Double,
         velConstraintOverride: TrajectoryVelocityConstraint?,
-        accelConstraintOverride: TrajectoryAccelerationConstraint?
+        accelConstraintOverride: TrajectoryAccelerationConstraint?,
+        decelConstraintOverride: TrajectoryAccelerationConstraint?
     ) =
-        addSegment({ strafeLeft(distance) }, velConstraintOverride, accelConstraintOverride)
+        addSegment({ strafeLeft(distance) }, velConstraintOverride, accelConstraintOverride, decelConstraintOverride)
 
     /**
      * Adds a segment that strafes right in the robot reference frame.
@@ -277,9 +285,10 @@ class TrajectoryBuilder private constructor(
     fun strafeRight(
         distance: Double,
         velConstraintOverride: TrajectoryVelocityConstraint?,
-        accelConstraintOverride: TrajectoryAccelerationConstraint?
+        accelConstraintOverride: TrajectoryAccelerationConstraint?,
+        decelConstraintOverride: TrajectoryAccelerationConstraint?
     ) =
-        addSegment({ strafeRight(distance) }, velConstraintOverride, accelConstraintOverride)
+        addSegment({ strafeRight(distance) }, velConstraintOverride, accelConstraintOverride, decelConstraintOverride)
 
     /**
      * Adds a spline segment with tangent heading interpolation.
@@ -292,9 +301,10 @@ class TrajectoryBuilder private constructor(
         endPosition: Vector2d,
         endTangent: Double,
         velConstraintOverride: TrajectoryVelocityConstraint?,
-        accelConstraintOverride: TrajectoryAccelerationConstraint?
+        accelConstraintOverride: TrajectoryAccelerationConstraint?,
+        decelConstraintOverride: TrajectoryAccelerationConstraint?
     ) =
-        addSegment({ splineTo(endPosition, endTangent) }, velConstraintOverride, accelConstraintOverride)
+        addSegment({ splineTo(endPosition, endTangent) }, velConstraintOverride, accelConstraintOverride, decelConstraintOverride)
 
     /**
      * TODO: Get old comments
@@ -312,6 +322,16 @@ class TrajectoryBuilder private constructor(
     ) =
         addSegment({ funnyRaikuCurve(endPose, p1, p2, h1, h2) }, velConstraintOverride, accelConstraintOverride, decelConstraintOverride)
 
+    fun funnyRaikuCurveLinear(
+        endPose: Pose2d,
+        p1: Vector2d,
+        p2: Vector2d,
+        velConstraintOverride: TrajectoryVelocityConstraint?,
+        accelConstraintOverride: TrajectoryAccelerationConstraint?,
+        decelConstraintOverride: TrajectoryAccelerationConstraint?
+    ) =
+        addSegment({ funnyRaikuCurveLinear(endPose, p1, p2) }, velConstraintOverride, accelConstraintOverride, decelConstraintOverride)
+
 
     /**
      * Adds a spline segment with constant heading interpolation.
@@ -324,9 +344,10 @@ class TrajectoryBuilder private constructor(
         endPosition: Vector2d,
         endTangent: Double,
         velConstraintOverride: TrajectoryVelocityConstraint?,
-        accelConstraintOverride: TrajectoryAccelerationConstraint?
+        accelConstraintOverride: TrajectoryAccelerationConstraint?,
+        decelConstraintOverride: TrajectoryAccelerationConstraint?
     ) =
-        addSegment({ splineToConstantHeading(endPosition, endTangent) }, velConstraintOverride, accelConstraintOverride)
+        addSegment({ splineToConstantHeading(endPosition, endTangent) }, velConstraintOverride, accelConstraintOverride, decelConstraintOverride)
 
     /**
      * Adds a spline segment with linear heading interpolation.
@@ -339,9 +360,10 @@ class TrajectoryBuilder private constructor(
         endPose: Pose2d,
         endTangent: Double,
         velConstraintOverride: TrajectoryVelocityConstraint?,
-        accelConstraintOverride: TrajectoryAccelerationConstraint?
+        accelConstraintOverride: TrajectoryAccelerationConstraint?,
+        decelConstraintOverride: TrajectoryAccelerationConstraint?
     ) =
-        addSegment({ splineToLinearHeading(endPose, endTangent) }, velConstraintOverride, accelConstraintOverride)
+        addSegment({ splineToLinearHeading(endPose, endTangent) }, velConstraintOverride, accelConstraintOverride, decelConstraintOverride)
 
     /**
      * Adds a spline segment with spline heading interpolation.
@@ -353,9 +375,10 @@ class TrajectoryBuilder private constructor(
         endPose: Pose2d,
         endTangent: Double,
         velConstraintOverride: TrajectoryVelocityConstraint?,
-        accelConstraintOverride: TrajectoryAccelerationConstraint?
+        accelConstraintOverride: TrajectoryAccelerationConstraint?,
+        decelConstraintOverride: TrajectoryAccelerationConstraint?
     ) =
-        addSegment({ splineToSplineHeading(endPose, endTangent) }, velConstraintOverride, accelConstraintOverride)
+        addSegment({ splineToSplineHeading(endPose, endTangent) }, velConstraintOverride, accelConstraintOverride, decelConstraintOverride)
 
     override fun buildTrajectory(
         path: Path,

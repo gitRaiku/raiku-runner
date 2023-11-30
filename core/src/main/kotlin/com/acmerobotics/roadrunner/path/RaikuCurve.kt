@@ -50,7 +50,11 @@ class RaikuCurve(
 
 
     init {
+        ss.add(length)
+        ts.add(0.0)
         parameterize(0.0, 1.0)
+        ss.add(length)
+        ts.add(1.0)
     }
 
     override fun internalGet(t: Double) = Vector2d(x[t], y[t])
